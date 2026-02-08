@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:monospace;
+}
+
+body{
+  background:black;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+  color:white;
+}
+
+/* ===== NỀN SỐ ===== */
+canvas{
+  position:fixed;
+  inset:0;
+  z-index:0;
+}
+
+/* ===== GIỮA MÀN HÌNH ===== */
+.center{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+
+/* ===== PHÁT SÁNG ===== */
+.glow{
+  color:white;
+  text-shadow:
+    0 0 10px white,
+    0 0 25px white,
+    0 0 45px white;
+}
+
+/* ===== COUNT ===== */
+#count{
+  font-size:90px;
+}
+
+/* ===== TEXT ===== */
+#loveText{
+  font-size:44px;
+  animation:float 2s ease-in-out infinite;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-15px)}
+}
+
+/* ===== HEART CONTAINER ===== */
+.scene{
+  width:500px;
+  height:450px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* ===== HEART ===== */
+.heart{
+  position:relative;
+  width:500px;
+  height:430px;
+  animation:beat 1.2s infinite;
+}
+
+@keyframes beat{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.05)}
+}
+
+/* ===== SHAPE HEART ===== */
+.heart::before,
+.heart::after{
+  content:"";
+  position:absolute;
+  width:250px;
+  height:400px;
+  background:#ff4fbf;
+  border-radius:250px 250px 0 0;
+  box-shadow:
+    0 0 35px #ff4fbf,
+    0 0 80px #ff4fbf;
+}
+
+.heart::before{
+  left:250px;
+  transform:rotate(-45deg);
+  transform-origin:0 100%;
+}
+
+.heart::after{
+  left:0;
+  transform:rotate(45deg);
+  transform-origin:100% 100%;
+}
+
+/* ===== CHỮ TRONG TIM ===== */
+.love-name{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:38px;
+  white-space:nowrap;
+  z-index:5;
+  pointer-events:none;
+}
+
+/* ===== ẨN ===== */
+.hidden{display:none}
+</style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="center">
+  <div id="count" class="glow">3</div>
+
+  <div id="loveText" class="glow hidden">
+    You are my love
+  </div>
+
+  <div id="heartBox" class="scene hidden">
+    <div class="heart">
+      <div class="love-name glow">
+        I love Ngọc Châu
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== NỀN SỐ 0 1 ===== */
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+function resize(){
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+}
+resize();
+window.onresize = resize;
+
+const chars = ["0","1"];
+const size = 18;
+let cols = Math.floor(canvas.width / size);
+let drops = Array(cols).fill(0).map(()=>Math.random()*canvas.height/size);
+
+function drawBG(){
+  ctx.fillStyle="rgba(0,0,0,0.3)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle="#ff4fbf";
+  ctx.shadowColor="#ff4fbf";
+  ctx.shadowBlur=18;
+  ctx.font=size+"px monospace";
+
+  for(let i=0;i<drops.length;i++){
+    const t = chars[Math.random()>0.5?1:0];
+    ctx.fillText(t,i*size,drops[i]*size);
+    drops[i]++;
+    if(drops[i]*size > canvas.height) drops[i]=0;
+  }
+}
+setInterval(drawBG,40);
+
+/* ===== TRÌNH TỰ ===== */
+const count = document.getElementById("count");
+const loveText = document.getElementById("loveText");
+const heartBox = document.getElementById("heartBox");
+
+let n=3;
+const cd=setInterval(()=>{
+  n--;
+  if(n>0){
+    count.textContent=n;
+  }else{
+    clearInterval(cd);
+    count.classList.add("hidden");
+    loveText.classList.remove("hidden");
+
+    setTimeout(()=>{
+      loveText.classList.add("hidden");
+      heartBox.classList.remove("hidden");
+    },3000);
+  }
+},1000);
+</script>
+
+</body>
+</html>
